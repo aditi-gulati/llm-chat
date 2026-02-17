@@ -337,7 +337,7 @@ OPENAI_API_KEY=sk-...
 git init
 git add .
 git commit -m "LLM Chat App"
-git remote add origin https://github.com/YOUR_USERNAME/llm-chat.git
+git remote add origin https://github.com/aditi-gulati/llm-chat.git
 git push -u origin main
 ```
 
@@ -352,7 +352,7 @@ git push -u origin main
 - Add: `OPENAI_API_KEY` and/or `ANTHROPIC_API_KEY`
 - (Ollama won't work here - requires local server)
 
-**Result:** App live at `https://your-username-llm-chat.streamlit.app`
+**Result:** App live at `https://aditi-llm.streamlit.app/`
 
 ### **Option 2: Docker** (For any server)
 
@@ -376,7 +376,7 @@ docker run -p 8501:8501 \
 ### **Option 3: Self-Hosted (Your server)**
 ```bash
 # On your server:
-git clone https://github.com/YOUR_USERNAME/llm-chat.git
+git clone https://github.com/aditi-gulati/llm-chat.git
 cd llm-chat
 pip install -r requirements.txt
 
@@ -522,7 +522,7 @@ streamlit run app_main.py
 
 ### **Deploy**
 ```bash
-# GitHub → Streamlit Cloud (easiest)
+# GitHub → Streamlit Cloud 
 git push origin main
 # → https://streamlit.io/cloud
 ```
@@ -545,11 +545,8 @@ git push origin main
 
 - **Ollama:** https://ollama.ai
 - **OpenAI API:** https://platform.openai.com/docs
+- **OpenAI API Key:** https://platform.openai.com/settings/organization/api-keys
 - **Anthropic:** https://docs.anthropic.com
+- **Anthropic Key:** https://platform.claude.com/settings/keys
 - **Streamlit:** https://docs.streamlit.io
 
----
-
-**Version:** 2.0 | **Status:** ✅ Production Ready | **Last Updated:** February 18, 2026
-
-Ready to demo? Start Ollama, run the app, and chat! 🚀

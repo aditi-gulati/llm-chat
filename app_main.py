@@ -1,5 +1,5 @@
 """
-�� Unified LLM Chat Application
+💬 Unified LLM Chat Application
 Support for Ollama, OpenAI (GPT-4, GPT-3.5), and Anthropic (Claude Sonnet, Haiku)
 Real-time streaming, advanced settings, chat history & export
 """
@@ -23,8 +23,8 @@ from llm_provider import get_llm_manager
 # ============================================================================
 
 st.set_page_config(
-    page_title="�� Unified LLM Chat",
-    page_icon="��",
+    page_title="💬 Unified LLM Chat",
+    page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -75,7 +75,7 @@ if not available_providers:
 # HEADER
 # ============================================================================
 
-st.markdown("# �� Unified LLM Chat")
+st.markdown("# 💬 Unified LLM Chat")
 st.markdown("*Support for Ollama, OpenAI (GPT-4, GPT-3.5), and Claude (Sonnet, Haiku)*")
 st.divider()
 
@@ -84,16 +84,16 @@ st.divider()
 # ============================================================================
 
 with st.sidebar:
-    st.markdown("## �� Provider & Model Selection")
+    st.markdown("## ⚙️ Provider & Model Selection")
     st.divider()
 
     # Provider Selection
-    st.markdown("### �� Select Provider")
+    st.markdown("### 🔌 Select Provider")
 
     provider_options = {
-        "ollama": "�� Ollama (Local/Remote)",
-        "openai": "�� OpenAI (GPT-4, GPT-3.5)",
-        "anthropic": "�� Anthropic (Claude)"
+        "ollama": "🦙 Ollama (Local/Remote)",
+        "openai": "🟢 OpenAI (GPT-4, GPT-3.5)",
+        "anthropic": "🧠 Anthropic (Claude)"
     }
 
     available_provider_options = {k: v for k, v in provider_options.items() if k in available_providers}
@@ -113,7 +113,15 @@ with st.sidebar:
     st.divider()
 
     # Model Selection
-    st.markdown("### �� Select Model")
+    st.markdown("### 🤖 Select Model")
+
+    # Refresh Models Button
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.write("Load models from provider")
+    with col2:
+        if st.button("🔄 Refresh", help="Reload models from provider", use_container_width=True):
+            st.rerun()
 
     models = llm_manager.get_models_for_provider(selected_provider)
 
@@ -130,7 +138,7 @@ with st.sidebar:
         model_info = provider.get_model_info(selected_model)
 
         if model_info:
-            with st.expander("�� Model Details"):
+            with st.expander("📋 Model Details"):
                 for key, value in model_info.items():
                     if key != "name":
                         st.write(f"**{key.replace('_', ' ').title()}:** {value}")
@@ -138,11 +146,12 @@ with st.sidebar:
         st.success(f"✅ Selected: {selected_model}")
     else:
         st.warning(f"No models available for {selected_provider}")
+        st.info("💡 For Ollama: Run `ollama pull mistral` in terminal\nFor OpenAI/Anthropic: Check API keys in .env")
 
     st.divider()
 
     # Advanced Settings
-    st.markdown("### ��️ Advanced Settings")
+    st.markdown("### ⚡️ Advanced Settings")
 
     col1, col2 = st.columns(2)
 
@@ -188,23 +197,23 @@ with st.sidebar:
     st.divider()
 
     # Chat Management
-    st.markdown("### �� Chat Management")
+    st.markdown("### 💾 Chat Management")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button("��️ Clear History", use_container_width=True):
+        if st.button("🗑️ Clear History", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
 
     with col2:
-        if st.button("�� Stats", use_container_width=True):
+        if st.button("📊 Stats", use_container_width=True):
             st.info(f"Messages: {len(st.session_state.messages)}")
 
     st.divider()
 
     # Export
-    st.markdown("### �� Export Chat")
+    st.markdown("### 📥 Export Chat")
 
     if st.session_state.messages:
         export_data = {
@@ -217,7 +226,7 @@ with st.sidebar:
 
         export_json = json.dumps(export_data, indent=2)
         st.download_button(
-            "�� Download Chat",
+            "⬇️ Download Chat",
             export_json,
             f"chat_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
             "application/json",
@@ -228,7 +237,7 @@ with st.sidebar:
 # MAIN CHAT AREA
 # ============================================================================
 
-st.markdown("### �� Chat")
+st.markdown("### 💬 Chat")
 
 # Display messages
 for message in st.session_state.messages:
@@ -254,7 +263,7 @@ with col1:
 
 with col2:
     st.markdown("<div style='height: 4rem'></div>", unsafe_allow_html=True)
-    send_button = st.button("�� Send", use_container_width=True)
+    send_button = st.button("✉️ Send", use_container_width=True)
 
 # Handle message
 if send_button and user_input:
@@ -318,7 +327,9 @@ if send_button and user_input:
 st.divider()
 st.markdown("""
 <center>
-<p>�� <b>Unified LLM Chat v1.0</b></p>
+<p><b>Unified LLM Chat v1.0</b></p>
+
+<p>© 2026 copyright all right reserved | Designed by ADITI GULATI</p>
 <p style='font-size: 0.8rem; color: gray;'>Support for Ollama • OpenAI • Anthropic Claude</p>
 </center>
 """, unsafe_allow_html=True)
