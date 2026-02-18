@@ -126,7 +126,6 @@ Dropdown in sidebar. Choose:
 - 🔴 **OpenAI** (if API key set)
 - 🟣 **Anthropic** (if API key set)
 
-**Demo:** Switch between Ollama and GPT-4 - same chat, different models
 
 ### **2. Model Selection**
 Auto-loads models for selected provider:
@@ -134,7 +133,6 @@ Auto-loads models for selected provider:
 - **OpenAI:** GPT-4 Turbo, GPT-4, GPT-3.5 Turbo
 - **Anthropic:** Claude 3 Sonnet, Haiku, Opus
 
-**Demo:** Switch models instantly without restart
 
 ### **3. Advanced Settings** (Sidebar Sliders)
 
@@ -145,12 +143,10 @@ Auto-loads models for selected provider:
 | **Top-K** | 1-100 | Token limit | How many options model considers |
 | **Max Response** | 128-4096 | Length limit | Short answers vs long essays |
 
-**Demo:** Ask same question with temp=0.1 (precise) vs temp=1.5 (creative)
 
 ### **4. Real-time Streaming**
 Response appears word-by-word as it's generated (not all at once)
 
-**Demo:** Watch response stream in real-time from any provider
 
 ### **5. Chat History**
 All messages saved. Shows:
@@ -158,8 +154,6 @@ All messages saved. Shows:
 - Which provider/model was used
 - Response time
 - Metadata
-
-**Demo:** See full conversation with provider info for each message
 
 ### **6. Export Chat**
 Download entire conversation as JSON (includes messages, settings, metadata)
