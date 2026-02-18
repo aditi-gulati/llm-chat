@@ -2,6 +2,7 @@
 💬 Unified LLM Chat Application
 Support for Ollama, OpenAI (GPT-4, GPT-3.5), and Anthropic (Claude Sonnet, Haiku)
 Real-time streaming, advanced settings, chat history & export
+File upload support for documents, PDFs, images, and text files
 """
 
 import streamlit as st
@@ -11,6 +12,8 @@ import time
 from typing import List, Dict
 import os
 from dotenv import load_dotenv
+import base64
+from io import StringIO
 
 # Load environment variables
 load_dotenv()
@@ -60,6 +63,12 @@ if "settings" not in st.session_state:
         "num_ctx": 2048,
     }
 
+if "uploaded_files" not in st.session_state:
+    st.session_state.uploaded_files = []
+
+if "file_contents" not in st.session_state:
+    st.session_state.file_contents = {}
+
 # ============================================================================
 # INITIALIZE LLM MANAGER
 # ============================================================================
@@ -70,6 +79,70 @@ available_providers = llm_manager.get_available_providers()
 if not available_providers:
     st.error("❌ No LLM providers configured. Please set API keys in .env file")
     st.stop()
+
+# ============================================================================
+# FILE PROCESSING UTILITIES
+# ============================================================================
+
+def extract_text_from_file(uploaded_file):
+    """Extract text content from uploaded file"""
+    try:
+        file_type = uploaded_file.type
+        filename = uploaded_file.name
+
+        # Text files
+        if file_type in ["text/plain", "text/markdown"]:
+            text = uploaded_file.getvalue().decode("utf-8")
+            return text
+
+        # CSV files
+        elif file_type == "text/csv":
+            text = uploaded_file.getvalue().decode("utf-8")
+            return f"CSV File Content:\n{text}"
+
+        # JSON files
+        elif file_type == "application/json":
+            text = uploaded_file.getvalue().decode("utf-8")
+            return f"JSON File Content:\n{text}"
+
+        # PDF files (basic extraction)
+        elif file_type == "application/pdf":
+            try:
+                import PyPDF2
+                pdf_reader = PyPDF2.PdfReader(uploaded_file)
+                text = ""
+                for page in pdf_reader.pages:
+                    text += page.extract_text()
+                return f"PDF Content:\n{text[:3000]}..."  # Limit to first 3000 chars
+            except ImportError:
+                return "⚠️ PDF support requires PyPDF2. Install with: pip install PyPDF2"
+
+        # Image files
+        elif file_type.startswith("image/"):
+            return f"��️ Image file: {filename}\n(Image analysis requires vision models. Use image description in your query.)"
+
+        # Word documents
+        elif file_type in ["application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
+            try:
+                from docx import Document
+                doc = Document(uploaded_file)
+                text = "\n".join([para.text for para in doc.paragraphs])
+                return f"Word Document Content:\n{text[:3000]}..."
+            except ImportError:
+                return "⚠️ Word support requires python-docx. Install with: pip install python-docx"
+
+        else:
+            return f"⚠️ File type '{file_type}' not directly supported. Attempting text extraction..."
+
+    except Exception as e:
+        return f"❌ Error processing file: {str(e)}"
+
+def get_file_summary(content: str) -> str:
+    """Generate a brief summary of file content"""
+    lines = content.split('\n')
+    preview = '\n'.join(lines[:5])
+    char_count = len(content)
+    return f"�� **File Summary:**\n- Characters: {char_count}\n- Preview:\n```\n{preview}\n```"
 
 # ============================================================================
 # HEADER
@@ -192,6 +265,41 @@ with st.sidebar:
             step=128
         )
         st.session_state.settings["num_predict"] = num_predict
+
+    st.divider()
+
+    # File Upload
+    st.markdown("### �� Upload Files")
+
+    uploaded_files = st.file_uploader(
+        "Upload documents (TXT, PDF, CSV, JSON, images, Word, etc.)",
+        type=["txt", "pdf", "csv", "json", "md", "png", "jpg", "jpeg", "gif", "doc", "docx"],
+        accept_multiple_files=True,
+        help="Upload files to analyze with Ollama models"
+    )
+
+    if uploaded_files:
+        st.success(f"✅ {len(uploaded_files)} file(s) uploaded")
+
+        for uploaded_file in uploaded_files:
+            with st.expander(f"�� {uploaded_file.name}"):
+                file_content = extract_text_from_file(uploaded_file)
+
+                # Store file content
+                st.session_state.file_contents[uploaded_file.name] = file_content
+
+                # Show preview
+                if "Error" not in file_content and "⚠️" not in file_content:
+                    st.write(get_file_summary(file_content))
+                else:
+                    st.info(file_content)
+
+                # Option to use file in chat
+                if st.button(f"�� Use in Chat: {uploaded_file.name}", use_container_width=True, key=f"use_{uploaded_file.name}"):
+                    # Add file context to next message
+                    file_context = f"**[File: {uploaded_file.name}]**\n\n{file_content[:1000]}"
+                    st.session_state.current_file = uploaded_file.name
+                    st.info(f"✅ File '{uploaded_file.name}' will be included in your next query")
 
     st.divider()
 
@@ -369,15 +477,31 @@ if send_button and user_input:
     if not st.session_state.current_model or not st.session_state.current_provider:
         st.error("⚠️ Please select a provider and model first")
     else:
+        # Include file content if a file was selected for use
+        message_content = user_input
+
+        if hasattr(st.session_state, 'current_file') and st.session_state.current_file:
+            file_name = st.session_state.current_file
+            file_content = st.session_state.file_contents.get(file_name, "")
+
+            # Add file context to the message
+            if file_content:
+                message_content = f"File: {file_name}\n\nContent:\n{file_content[:2000]}\n\nQuestion: {user_input}"
+                st.success(f"�� Including file '{file_name}' in your query")
+                st.session_state.current_file = None  # Reset after use
+
         # Add user message
         st.session_state.messages.append({
             "role": "user",
-            "content": user_input
+            "content": message_content,
+            "file_attached": hasattr(st.session_state, 'current_file') and st.session_state.current_file is not None
         })
 
         # Display user message
         with st.chat_message("user"):
             st.markdown(user_input)
+            if hasattr(st.session_state, 'current_file') and st.session_state.current_file:
+                st.caption(f"�� File attached: {st.session_state.current_file}")
 
         # Get AI response
         with st.chat_message("assistant"):
