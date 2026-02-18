@@ -212,26 +212,126 @@ with st.sidebar:
 
     st.divider()
 
-    # Export
     st.markdown("### 📥 Export Chat")
 
     if st.session_state.messages:
-        export_data = {
-            "provider": st.session_state.current_provider,
-            "model": st.session_state.current_model,
-            "timestamp": datetime.now().isoformat(),
-            "settings": st.session_state.settings,
-            "messages": st.session_state.messages
-        }
-
-        export_json = json.dumps(export_data, indent=2)
-        st.download_button(
-            "⬇️ Download Chat",
-            export_json,
-            f"chat_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
-            "application/json",
-            use_container_width=True
+        # Export format selector
+        export_format = st.radio(
+            "Select export format:",
+            ["JSON", "TXT", "CSV", "Markdown"],
+            horizontal=True,
+            help="Choose format to export your chat"
         )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("Export", use_container_width=True):
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                messages = st.session_state.messages
+                provider = st.session_state.current_provider
+                model = st.session_state.current_model
+
+                if export_format == "JSON":
+                    # Export as JSON
+                    export_data = {
+                        "provider": provider,
+                        "model": model,
+                        "timestamp": datetime.now().isoformat(),
+                        "settings": st.session_state.settings,
+                        "messages": messages
+                    }
+                    export_content = json.dumps(export_data, indent=2)
+                    st.download_button(
+                        "Download JSON",
+                        export_content,
+                        f"chat_{timestamp}.json",
+                        "application/json",
+                        use_container_width=True,
+                        key="download_json"
+                    )
+
+                elif export_format == "TXT":
+                    # Export as TXT
+                    txt_content = f"CHAT EXPORT\n"
+                    txt_content += f"{'='*60}\n"
+                    txt_content += f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                    txt_content += f"Provider: {provider}\n"
+                    txt_content += f"Model: {model}\n"
+                    txt_content += f"{'='*60}\n\n"
+
+                    for msg in messages:
+                        role = msg.get("role", "unknown").upper()
+                        content = msg.get("content", "")
+                        txt_content += f"[{role}]\n{content}\n\n"
+
+                    st.download_button(
+                        "Download TXT",
+                        txt_content,
+                        f"chat_{timestamp}.txt",
+                        "text/plain",
+                        use_container_width=True,
+                        key="download_txt"
+                    )
+
+                elif export_format == "CSV":
+                    # Export as CSV
+                    import csv
+                    from io import StringIO
+
+                    csv_buffer = StringIO()
+                    csv_writer = csv.writer(csv_buffer)
+                    csv_writer.writerow(["Timestamp", "Role", "Message", "Provider", "Model"])
+
+                    for i, msg in enumerate(messages):
+                        csv_writer.writerow([
+                            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                            msg.get("role", "unknown"),
+                            msg.get("content", "").replace("\n", " "),
+                            provider if i == len(messages) - 1 else "",
+                            model if i == len(messages) - 1 else ""
+                        ])
+
+                    st.download_button(
+                        "Download CSV",
+                        csv_buffer.getvalue(),
+                        f"chat_{timestamp}.csv",
+                        "text/csv",
+                        use_container_width=True,
+                        key="download_csv"
+                    )
+
+                elif export_format == "Markdown":
+                    # Export as Markdown
+                    md_content = f"# Chat Export\n\n"
+                    md_content += f"**Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+                    md_content += f"**Provider:** `{provider}`\n\n"
+                    md_content += f"**Model:** `{model}`\n\n"
+                    md_content += f"**Total Messages:** {len(messages)}\n\n"
+                    md_content += "---\n\n"
+
+                    for msg in messages:
+                        role = msg.get("role", "unknown")
+                        content = msg.get("content", "")
+                        if role == "user":
+                            md_content += f"### You\n\n{content}\n\n"
+                        else:
+                            md_content += f"### Assistant\n\n{content}\n\n"
+                        md_content += "---\n\n"
+
+                    st.download_button(
+                        "Download Markdown",
+                        md_content,
+                        f"chat_{timestamp}.md",
+                        "text/markdown",
+                        use_container_width=True,
+                        key="download_markdown"
+                    )
+
+        with col2:
+            st.metric("Messages", len(messages))
+    else:
+        st.info("Start a conversation to enable export")
 
 # ============================================================================
 # MAIN CHAT AREA
