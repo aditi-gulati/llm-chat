@@ -77,7 +77,6 @@ if not available_providers:
 
 st.markdown("# 💬 Unified LLM Chat")
 st.markdown("*Support for Ollama, OpenAI (GPT-4, GPT-3.5), and Claude (Sonnet, Haiku)*")
-st.divider()
 
 # ============================================================================
 # SIDEBAR - PROVIDER & MODEL SELECTION
@@ -337,7 +336,7 @@ with st.sidebar:
 # MAIN CHAT AREA
 # ============================================================================
 
-st.markdown("### 💬 Chat")
+# st.markdown("### 💬 Chat")
 
 # Display messages
 for message in st.session_state.messages:
