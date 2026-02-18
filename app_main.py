@@ -119,7 +119,7 @@ def extract_text_from_file(uploaded_file):
 
         # Image files
         elif file_type.startswith("image/"):
-            return f"��️ Image file: {filename}\n(Image analysis requires vision models. Use image description in your query.)"
+            return f"🖼️ Image file: {filename}\n(Image analysis requires vision models. Use image description in your query.)"
 
         # Word documents
         elif file_type in ["application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
@@ -142,7 +142,7 @@ def get_file_summary(content: str) -> str:
     lines = content.split('\n')
     preview = '\n'.join(lines[:5])
     char_count = len(content)
-    return f"�� **File Summary:**\n- Characters: {char_count}\n- Preview:\n```\n{preview}\n```"
+    return f"📄 **File Summary:**\n- Characters: {char_count}\n- Preview:\n```\n{preview}\n```"
 
 # ============================================================================
 # HEADER
@@ -269,7 +269,7 @@ with st.sidebar:
     st.divider()
 
     # File Upload
-    st.markdown("### �� Upload Files")
+    st.markdown("### 📁 Upload Files")
 
     uploaded_files = st.file_uploader(
         "Upload documents (TXT, PDF, CSV, JSON, images, Word, etc.)",
@@ -282,7 +282,7 @@ with st.sidebar:
         st.success(f"✅ {len(uploaded_files)} file(s) uploaded")
 
         for uploaded_file in uploaded_files:
-            with st.expander(f"�� {uploaded_file.name}"):
+            with st.expander(f"📄 {uploaded_file.name}"):
                 file_content = extract_text_from_file(uploaded_file)
 
                 # Store file content
@@ -295,7 +295,7 @@ with st.sidebar:
                     st.info(file_content)
 
                 # Option to use file in chat
-                if st.button(f"�� Use in Chat: {uploaded_file.name}", use_container_width=True, key=f"use_{uploaded_file.name}"):
+                if st.button(f"💬 Use in Chat: {uploaded_file.name}", use_container_width=True, key=f"use_{uploaded_file.name}"):
                     # Add file context to next message
                     file_context = f"**[File: {uploaded_file.name}]**\n\n{file_content[:1000]}"
                     st.session_state.current_file = uploaded_file.name
@@ -487,7 +487,7 @@ if send_button and user_input:
             # Add file context to the message
             if file_content:
                 message_content = f"File: {file_name}\n\nContent:\n{file_content[:2000]}\n\nQuestion: {user_input}"
-                st.success(f"�� Including file '{file_name}' in your query")
+                st.success(f"📎 Including file '{file_name}' in your query")
                 st.session_state.current_file = None  # Reset after use
 
         # Add user message
@@ -501,7 +501,7 @@ if send_button and user_input:
         with st.chat_message("user"):
             st.markdown(user_input)
             if hasattr(st.session_state, 'current_file') and st.session_state.current_file:
-                st.caption(f"�� File attached: {st.session_state.current_file}")
+                st.caption(f"📎 File attached: {st.session_state.current_file}")
 
         # Get AI response
         with st.chat_message("assistant"):
