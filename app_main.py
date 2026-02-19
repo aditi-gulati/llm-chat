@@ -436,7 +436,7 @@ with st.sidebar:
                     )
 
         with col2:
-            st.metric("Messages", len(messages))
+            st.metric("Messages", len(st.session_state.messages))
     else:
         st.info("Start a conversation to enable export")
 
