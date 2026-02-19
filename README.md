@@ -4,14 +4,14 @@
 
 ---
 
-## ⚡ Quick Start (5 Minutes)
+## ⚡ Quick Start 
 
 ### **1. Install Dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-### **2. Configure `.env`** (Choose one or more)
+### **2. Configure `.env`
 ```env
 # LOCAL: Ollama (Free, runs on your computer)
 OLLAMA_BASE_URL=http://localhost:11434
@@ -25,7 +25,7 @@ ANTHROPIC_API_KEY=sk-ant-your-key-here
 
 ### **3. Run App**
 ```bash
-streamlit run app_main.py
+python -m streamlit run app_main.py
 ```
 Opens at: `http://localhost:8501`
 
@@ -118,7 +118,7 @@ Browser (You see response)
 
 ---
 
-## 🎮 Features & Demo
+## 🎮 Features
 
 ### **1. Provider Selection**
 Dropdown in sidebar. Choose:
@@ -136,7 +136,7 @@ Auto-loads models for selected provider:
 
 ### **3. Advanced Settings** (Sidebar Sliders)
 
-| Setting | Range | Effect | Demo |
+| Setting | Range | Effect | Test |
 |---------|-------|--------|------|
 | **Temperature** | 0.0-2.0 | Creativity | Low=precise facts, High=creative |
 | **Top-P** | 0.0-1.0 | Diversity | Controls response variety |
@@ -157,8 +157,6 @@ All messages saved. Shows:
 
 ### **6. Export Chat**
 Download entire conversation as JSON (includes messages, settings, metadata)
-
-**Demo:** Export chat, open in text editor, see structured data
 
 ---
 
@@ -274,7 +272,7 @@ Max = 2048 tokens
 
 ---
 
-## 🏃 Demo Scenarios
+## 🏃 Scenarios
 
 ### **Scenario 1: Local-Only (No API Keys)**
 ```bash
@@ -412,7 +410,7 @@ streamlit run app_main.py --server.port 8502
 
 ---
 
-## 📚 Code Structure (For Developers)
+## 📚 Code Structure
 
 ### **`app_main.py` - Streamlit UI**
 - Page setup & layout
@@ -443,8 +441,6 @@ for chunk in manager.chat(
 ```
 
 ---
-
-## 🎯 For GenAI/LLM Professionals
 
 ### **Token Economics**
 
@@ -520,18 +516,6 @@ streamlit run app_main.py
 git push origin main
 # → https://streamlit.io/cloud
 ```
-
----
-
-## ✅ What You Get
-
-✅ **Works Offline:** Ollama runs locally, no internet needed
-✅ **Works Online:** OpenAI & Anthropic APIs supported
-✅ **Switch Instantly:** Change providers without restart
-✅ **Stream Responses:** Real-time word-by-word display
-✅ **Advanced Settings:** Temperature, context, token control
-✅ **Export:** Download chats as JSON
-✅ **Production-Ready:** Clean code, error handling, logging
 
 ---
 
