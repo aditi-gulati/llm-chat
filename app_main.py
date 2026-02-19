@@ -272,10 +272,11 @@ with st.sidebar:
     st.markdown("### 📁 Upload Files")
 
     uploaded_files = st.file_uploader(
-        "Upload documents (TXT, PDF, CSV, JSON, images, Word, etc.)",
-        type=["txt", "pdf", "csv", "json", "md", "png", "jpg", "jpeg", "gif", "doc", "docx"],
+        "Upload documents, code, or data files (TXT, PDF, CSV, JSON, Python, images, Word, etc.)",
+        type=["txt", "pdf", "csv", "json", "md", "png", "jpg", "jpeg", "gif", "doc", "docx",
+              "py", "js", "java", "cpp", "c", "html", "css", "sql", "yaml", "yml", "xml", "sh", "bash"],
         accept_multiple_files=True,
-        help="Upload files to analyze with Ollama models"
+        help="Upload files to analyze with LLM models"
     )
 
     if uploaded_files:
